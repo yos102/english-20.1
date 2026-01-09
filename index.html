@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מבחן אנגלית 108 מילים - כיתה ז'</title>
+    <title>מבחן אנגלית - כיתה ז'</title>
     <style>
         :root { --primary: #4a90e2; --success: #48bb78; --error: #f56565; --bg: #f0f4f8; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; line-height: 1.6; padding-bottom: 60px; }
-        .container { max-width: 950px; margin: auto; background: white; padding: 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-        h1, h3 { color: #2d3748; }
-        h1 { text-align: center; }
-        h3 { border-right: 5px solid var(--primary); padding-right: 15px; background: #f8fbff; padding: 10px; border-radius: 0 10px 10px 0; margin-top: 30px; }
-        .ltr-text { direction: ltr; text-align: left; }
-
-        /* Matching */
-        .matching-container { display: flex; justify-content: space-around; margin: 20px 0; }
-        .column { display: flex; flex-direction: column; gap: 10px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; line-height: 1.6; padding-bottom: 60px; overflow-x: hidden; }
+        .container { max-width: 950px; margin: auto; background: white; padding: 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); position: relative; z-index: 1; }
+        h1, h3 { color: #2d3748; text-align: center; }
+        h3 { border-right: 5px solid var(--primary); padding-right: 15px; background: #f8fbff; padding: 10px; border-radius: 0 10px 10px 0; margin-top: 30px; text-align: right; }
+        
+        /* Matching System */
+        .matching-wrapper { position: relative; margin: 20px 0; }
+        #match-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 1; }
+        .matching-container { display: flex; justify-content: space-between; align-items: flex-start; padding: 0 50px; }
+        .column { display: flex; flex-direction: column; gap: 15px; z-index: 2; }
+        
         .match-item { 
-            padding: 10px 15px; background: #edf2f7; border: 2px solid #cbd5e0; border-radius: 10px; 
-            cursor: pointer; text-align: center; width: 140px; font-weight: bold; transition: 0.2s; 
+            padding: 12px; background: #edf2f7; border: 2px solid #cbd5e0; border-radius: 10px; 
+            cursor: pointer; text-align: center; width: 130px; font-weight: bold; transition: 0.2s; position: relative;
         }
-        .match-item.selected { background: var(--primary); color: white; }
-        .match-item.correct { background: var(--success) !important; color: white !important; cursor: default; }
-        .match-item.wrong { background: var(--error) !important; color: white !important; }
+        .match-item.selected { background: var(--primary); color: white; border-color: #2b6cb0; }
+        .match-item.checked-correct { background: var(--success) !important; color: white !important; border-color: #38a169; }
+        .match-item.checked-wrong { background: var(--error) !important; color: white !important; border-color: #c53030; }
 
         /* Drag and Drop */
         .word-bank { background: #fff9c4; padding: 20px; border-radius: 15px; margin: 20px 0; text-align: center; border: 2px dashed #fbc02d; }
@@ -30,54 +31,65 @@
             display: inline-block; padding: 8px 16px; background: white; border: 2px solid var(--primary);
             border-radius: 12px; cursor: grab; margin: 5px; font-weight: bold; color: var(--primary);
         }
-        /* עיצוב למילה ששומשה */
-        .drag-item.used { opacity: 0.3; text-decoration: line-through; pointer-events: none; filter: grayscale(1); }
+        .drag-item.used { opacity: 0.2; text-decoration: line-through; pointer-events: none; filter: grayscale(1); }
 
         .drop-zone, .img-drop-zone { 
             display: inline-block; min-width: 100px; padding: 5px; border-bottom: 3px solid var(--primary); 
-            background: #f7fafc; vertical-align: middle; text-align: center; border-radius: 5px 5px 0 0;
+            background: #f7fafc; vertical-align: middle; text-align: center; border-radius: 5px 5px 0 0; min-height: 30px;
         }
-        .img-drop-zone { width: 85%; margin: 10px auto; border: 2px dashed var(--primary); min-height: 40px; color: #a0aec0; }
+        .img-drop-zone { width: 85%; margin: 10px auto; border: 2px dashed var(--primary); color: #a0aec0; }
         
+        .ltr-text { direction: ltr; text-align: left; }
         .correct-ans { border-color: var(--success) !important; color: var(--success); background: #f0fff4; }
         .wrong-ans { border-color: var(--error) !important; color: var(--error); background: #fff5f5; }
         .correction-text { color: var(--success); font-weight: bold; font-size: 0.9em; margin-left: 5px; }
 
         .img-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
         .img-card { background: #f8fbff; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #e2e8f0; }
-        .emoji-img { font-size: 60px; display: block; margin-bottom: 10px; }
+        .emoji-img { font-size: 50px; display: block; }
 
-        .btn-check { width: 100%; padding: 20px; background: #2d3748; color: white; border: none; border-radius: 15px; font-size: 1.4em; cursor: pointer; margin-top: 40px; }
-        #final-result { display:none; text-align:center; margin-top:30px; padding:20px; border-radius:15px; }
+        .btn-check { width: 100%; padding: 20px; background: #2d3748; color: white; border: none; border-radius: 15px; font-size: 1.4em; cursor: pointer; margin-top: 40px; transition: 0.3s; }
+        .btn-check:hover { background: #1a202c; transform: translateY(-2px); }
+        
+        #final-result { display:none; text-align:center; margin-top:30px; padding:30px; border-radius:20px; background: #edf2f7; }
+        .feedback-icon { font-size: 4rem; display: block; margin-bottom: 10px; }
         .speak-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; }
-        footer { position: absolute; bottom: 10px; left: 20px; font-size: 0.9rem; color: #a0aec0; }
+        footer { position: fixed; bottom: 10px; left: 20px; font-size: 0.8rem; color: #a0aec0; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>המבחן הגדול באנגלית - כיתה ז'</h1>
-    <p style="text-align: center; font-weight: bold; color: #718096;">גרור את המילים למקום! המילים שנבחרו יימחקו מהמחסן.</p>
-
-    <h3>1. משחק הזיכרון (התאמה)</h3>
-    <div class="matching-container" id="matching-game">
-        <div class="column" id="english-cols"></div>
-        <div class="column" id="hebrew-cols"></div>
+    
+    <h3>1. התאם בין המילים (בחרו זוגות, הבדיקה בסוף)</h3>
+    <div class="matching-wrapper">
+        <canvas id="match-canvas"></canvas>
+        <div class="matching-container">
+            <div class="column" id="eng-col"></div>
+            <div class="column" id="heb-col"></div>
+        </div>
     </div>
 
     <h3>2. השלם את המשפטים</h3>
     <div id="s-bank" class="word-bank"></div>
     <div id="s-questions" class="ltr-text"></div>
 
-    <h3>3. מה בתמונה?</h3>
+    <h3>3. זהה את התמונה</h3>
     <div id="i-bank" class="word-bank"></div>
     <div id="i-questions" class="img-grid"></div>
 
     <button class="btn-check" id="main-btn" onclick="calculateGrade()">סיימתי! בדוק לי את הציון 📝</button>
-    <div id="final-result"></div>
+    
+    <div id="final-result">
+        <span id="feedback-emoji" class="feedback-icon"></span>
+        <h2 id="grade-text"></h2>
+        <p id="feedback-msg"></p>
+        <button class="btn-check" style="background: var(--primary)" onclick="location.reload()">מבחן חדש 🔄</button>
+    </div>
 </div>
 
-<footer>eng 20.1</footer>
+<footer>eng 20.3 | © 2026</footer>
 
 <script>
     const fullList = [
@@ -87,17 +99,14 @@
         { en: "water", he: "מים", emoji: "💧" }, { en: "apple", he: "תפוח", emoji: "🍎" },
         { en: "lemon", he: "לימון", emoji: "🍋" }, { en: "pizza", he: "פיצה", emoji: "🍕" },
         { en: "egg", he: "ביצה", emoji: "🥚" }, { en: "baby", he: "תינוק", emoji: "👶" },
-        { en: "bananas", he: "בננות", emoji: "🍌" }, { en: "milk", he: "חלב", emoji: "🍼" },
-        { en: "cheese", he: "גבינה", emoji: "🧀" }, { en: "chicken", he: "עוף", emoji: "🍗" },
-        { en: "chips", he: "צ'יפס", emoji: "🍟" }, { en: "chair", he: "כיסא", emoji: "🪑" },
-        { en: "bread", he: "לחם", emoji: "🍞" }, { en: "fish", he: "דג", emoji: "🐟" },
-        { en: "carrot", he: "גזר", emoji: "🥕" }, { en: "onion", he: "בצל", emoji: "🧅" },
-        { en: "peppers", he: "פלפלים", emoji: "🫑" }, { en: "table", he: "שולחן", emoji: "🪑" },
-        { en: "tomato", he: "עגבנייה", emoji: "🍅" }, { en: "cake", he: "עוגה", emoji: "🎂" },
-        { en: "gift", he: "מתנה", emoji: "🎁" }, { en: "ice cream", he: "גלידה", emoji: "🍦" },
+        { en: "milk", he: "חלב", emoji: "🍼" }, { en: "cheese", he: "גבינה", emoji: "🧀" },
+        { en: "chicken", he: "עוף", emoji: "🍗" }, { en: "chips", he: "צ'יפס", emoji: "🍟" },
+        { en: "chair", he: "כיסא", emoji: "🪑" }, { en: "bread", he: "לחם", emoji: "🍞" },
+        { en: "fish", he: "דג", emoji: "🐟" }, { en: "carrot", he: "גזר", emoji: "🥕" },
+        { en: "onion", he: "בצל", emoji: "🧅" }, { en: "tomato", he: "עגבנייה", emoji: "🍅" },
+        { en: "cake", he: "עוגה", emoji: "🎂" }, { en: "gift", he: "מתנה", emoji: "🎁" },
         { en: "mother", he: "אמא", emoji: "👩" }, { en: "father", he: "אבא", emoji: "👨" },
-        { en: "teacher", he: "מורה", emoji: "👩‍🏫" }, { en: "cat", he: "חתול", emoji: "🐱" },
-        { en: "dog", he: "כלב", emoji: "🐶" }, { en: "sun", he: "שמש", emoji: "☀️" }
+        { en: "teacher", he: "מורה", emoji: "👩‍🏫" }, { en: "dog", he: "כלב", emoji: "🐶" }
     ];
 
     const sentences = [
@@ -108,123 +117,164 @@
     ];
 
     let selectedEng = null;
-    let scoreMatch = 0;
+    let connections = [];
     const size = 8;
+    let isChecked = false;
 
     const shuffle = (arr) => arr.sort(() => 0.5 - Math.random());
 
     function init() {
         const selSentences = shuffle([...sentences]).slice(0, size);
         const selEmojis = shuffle(fullList.filter(x => x.emoji)).slice(0, size);
-        const usedWords = new Set([...selSentences.map(s=>s.a), ...selEmojis.map(e=>e.en)]);
-        const selMatch = shuffle(fullList.filter(w => !usedWords.has(w.en))).slice(0, size);
+        const used = new Set([...selSentences.map(s=>s.a), ...selEmojis.map(e=>e.en)]);
+        const selMatch = shuffle(fullList.filter(w => !used.has(w.en))).slice(0, size);
 
-        // 1. Matching Logic
-        const engCols = document.getElementById('english-cols');
-        const hebCols = document.getElementById('hebrew-cols');
-        const shuffledHeb = shuffle([...selMatch]);
-
+        const eCol = document.getElementById('eng-col'), hCol = document.getElementById('heb-col');
+        
         selMatch.forEach(item => {
-            const div = createEl('div', 'match-item', item.en, engCols);
+            const div = createEl('div', 'match-item', item.en, eCol);
+            div.dataset.val = item.en;
             div.onclick = () => {
-                if(div.classList.contains('correct')) return;
+                if(isChecked) return;
                 if(selectedEng) selectedEng.classList.remove('selected');
-                selectedEng = div;
-                div.classList.add('selected');
+                selectedEng = div; div.classList.add('selected');
             };
         });
 
-        shuffledHeb.forEach(item => {
-            const div = createEl('div', 'match-item', item.he, hebCols);
+        shuffle([...selMatch]).forEach(item => {
+            const div = createEl('div', 'match-item', item.he, hCol);
+            div.dataset.val = item.he;
             div.onclick = () => {
-                if(!selectedEng || div.classList.contains('correct')) return;
-                const correctHe = fullList.find(v => v.en === selectedEng.innerText).he;
-                if(correctHe === item.he) {
-                    selectedEng.className = div.className = 'match-item correct';
-                    selectedEng = null;
-                    scoreMatch++;
-                } else {
-                    div.classList.add('wrong');
-                    setTimeout(() => div.classList.remove('wrong'), 500);
-                }
+                if(!selectedEng || isChecked) return;
+                
+                // הסרת חיבור קיים אם אחד הצדדים כבר תפוס
+                connections = connections.filter(c => c.from !== selectedEng && c.to !== div);
+                
+                connections.push({from: selectedEng, to: div, eng: selectedEng.dataset.val, heb: div.dataset.val});
+                selectedEng.classList.remove('selected');
+                selectedEng = null;
+                drawLines();
             };
         });
 
-        // 2 & 3. Drag & Drop Logic
-        renderDragSection('s', selSentences.map(x => x.a), selSentences);
-        renderDragSection('i', selEmojis.map(x => x.en), selEmojis);
+        renderSection('s', selSentences.map(x=>x.a), selSentences);
+        renderSection('i', selEmojis.map(x=>x.en), selEmojis);
+        window.addEventListener('resize', drawLines);
     }
 
-    function renderDragSection(prefix, words, questions) {
-        const bank = document.getElementById(`${prefix}-bank`);
-        const container = document.getElementById(`${prefix}-questions`);
-        
+    function renderSection(prefix, words, qs) {
+        const bank = document.getElementById(`${prefix}-bank`), cont = document.getElementById(`${prefix}-questions`);
         shuffle(words).forEach(w => {
-            const item = createEl('div', 'drag-item', w, bank);
-            item.draggable = true;
-            item.id = `${prefix}-word-${w}`;
-            item.ondragstart = (e) => e.dataTransfer.setData("text", w + "|" + prefix);
+            const it = createEl('div', 'drag-item', w, bank);
+            it.draggable = true; it.id = `${prefix}-${w}`;
+            it.ondragstart = (e) => e.dataTransfer.setData("text", `${w}|${prefix}`);
         });
 
-        questions.forEach((q, i) => {
-            const div = document.createElement('div');
-            div.className = prefix === 's' ? "sentence-row" : "";
+        qs.forEach(q => {
+            const d = document.createElement('div');
             if(prefix === 's') {
-                div.innerHTML = `<button class="speak-btn" onclick="speak('${q.q}')">🔊</button> 
-                                 <span>${q.q.replace('____', `<div class="drop-zone" data-ans="${q.a}" ondrop="drop(event)" ondragover="allowDrop(event)"></div>`)}</span>`;
+                d.className = "sentence-row";
+                d.innerHTML = `<button class="speak-btn" onclick="speak('${q.q}')">🔊</button> 
+                               <span>${q.q.replace('____', `<div class="drop-zone" data-ans="${q.a}" ondrop="drop(event)" ondragover="allowDrop(event)"></div>`)}</span>`;
             } else {
-                div.className = "img-card";
-                div.innerHTML = `<span class="emoji-img">${q.emoji}</span>
-                                 <div class="img-drop-zone" data-ans="${q.en}" ondrop="drop(event)" ondragover="allowDrop(event)">גרור...</div>`;
+                d.className = "img-card";
+                d.innerHTML = `<span class="emoji-img">${q.emoji}</span>
+                               <div class="img-drop-zone" data-ans="${q.en}" ondrop="drop(event)" ondragover="allowDrop(event)">גרור...</div>`;
             }
-            container.appendChild(div);
+            cont.appendChild(d);
         });
+    }
+
+    function drop(e) {
+        e.preventDefault();
+        if(isChecked) return;
+        const [word, prefix] = e.dataTransfer.getData("text").split("|");
+        const zone = e.target;
+        if(zone.innerText && zone.innerText !== "גרור...") {
+            document.getElementById(`${prefix}-${zone.innerText}`)?.classList.remove('used');
+        }
+        zone.innerText = word; zone.style.color = "var(--primary)";
+        document.getElementById(`${prefix}-${word}`).classList.add('used');
     }
 
     function allowDrop(e) { e.preventDefault(); }
 
-    function drop(e) {
-        e.preventDefault();
-        const [word, prefix] = e.dataTransfer.getData("text").split("|");
-        const zone = e.target;
-
-        // אם כבר הייתה מילה בתיבה, נחזיר אותה להיות פעילה במחסן
-        if (zone.innerText && zone.innerText !== "גרור...") {
-            const oldWordId = `${prefix}-word-${zone.innerText}`;
-            if(document.getElementById(oldWordId)) document.getElementById(oldWordId).classList.remove('used');
-        }
-
-        // עדכון התיבה
-        zone.innerText = word;
-        zone.style.color = "var(--primary)";
+    function drawLines() {
+        const canvas = document.getElementById('match-canvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.querySelector('.matching-wrapper');
+        canvas.width = container.offsetWidth; canvas.height = container.offsetHeight;
         
-        // סימון המילה החדשה כ"משומשת" במחסן
-        document.getElementById(`${prefix}-word-${word}`).classList.add('used');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        connections.forEach(conn => {
+            const rect1 = conn.from.getBoundingClientRect(), rect2 = conn.to.getBoundingClientRect();
+            const contRect = container.getBoundingClientRect();
+            
+            ctx.beginPath();
+            ctx.moveTo(rect1.right - contRect.left, rect1.top + rect1.height/2 - contRect.top);
+            ctx.lineTo(rect2.left - contRect.left, rect2.top + rect2.height/2 - contRect.top);
+            
+            if (!isChecked) {
+                ctx.strokeStyle = '#4a90e2';
+            } else {
+                const correctHeb = fullList.find(f => f.en === conn.eng).he;
+                ctx.strokeStyle = (conn.heb === correctHeb) ? '#48bb78' : '#f56565';
+            }
+            
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        });
     }
 
     function calculateGrade() {
-        let sCorrect = 0, iCorrect = 0;
-        
+        isChecked = true;
+        let sCorr = 0, iCorr = 0, mCorr = 0;
+
+        // בדיקת התאמות (Matching)
+        connections.forEach(conn => {
+            const correctHeb = fullList.find(f => f.en === conn.eng).he;
+            if(conn.heb === correctHeb) {
+                mCorr++;
+                conn.from.classList.add('checked-correct');
+                conn.to.classList.add('checked-correct');
+            } else {
+                conn.from.classList.add('checked-wrong');
+                conn.to.classList.add('checked-wrong');
+            }
+        });
+        drawLines();
+
+        // בדיקת גרירה
         document.querySelectorAll('.drop-zone, .img-drop-zone').forEach(z => {
-            const isCorrect = z.innerText.trim() === z.dataset.ans;
-            z.className += isCorrect ? " correct-ans" : " wrong-ans";
-            if(isCorrect) z.classList.contains('drop-zone') ? sCorrect++ : iCorrect++;
-            else if(z.classList.contains('drop-zone')) z.insertAdjacentHTML('afterend', `<span class="correction-text">(${z.dataset.ans})</span>`);
-            else z.innerText += ` -> ${z.dataset.ans}`;
+            const ok = z.innerText.trim() === z.dataset.ans;
+            z.className += ok ? " correct-ans" : " wrong-ans";
+            if(ok) z.classList.contains('drop-zone') ? sCorr++ : iCorr++;
+            else {
+                if(z.classList.contains('drop-zone')) z.insertAdjacentHTML('afterend', `<span class="correction-text">(${z.dataset.ans})</span>`);
+                else z.innerText = `❌ (${z.dataset.ans})`;
+            }
         });
 
-        const total = Math.round((scoreMatch/size)*30 + (sCorrect/size)*35 + (iCorrect/size)*35);
+        const score = Math.round((mCorr/size)*30 + (sCorr/size)*35 + (iCorr/size)*35);
         const res = document.getElementById('final-result');
+        const emoji = document.getElementById('feedback-emoji');
+        const msg = document.getElementById('feedback-msg');
+
         res.style.display = "block";
-        res.innerHTML = `<h2>ציון: ${total}</h2><button class="btn-check" onclick="location.reload()">מבחן חדש 🔄</button>`;
+        document.getElementById('grade-text').innerText = `הציון שלך: ${score}`;
         document.getElementById('main-btn').style.display = 'none';
+
+        if(score >= 95) { emoji.innerText = "👑"; msg.innerText = "וואו! אתה פשוט אלוף העולם באנגלית!"; }
+        else if(score >= 85) { emoji.innerText = "🌟"; msg.innerText = "כל הכבוד! ציון מצוין, אתה שולט בחומר!"; }
+        else if(score >= 70) { emoji.innerText = "👍"; msg.innerText = "עבודה טובה! עוד קצת תרגול ותהיה מושלם."; }
+        else { emoji.innerText = "💪"; msg.innerText = "אל תתייאש, כל תרגול מקדם אותך. נסה שוב!"; }
+        
+        window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
     }
 
     function createEl(tag, cls, txt, parent) {
-        const el = document.createElement(tag);
-        el.className = cls; el.innerText = txt;
-        if(parent) parent.appendChild(el);
-        return el;
+        const el = document.createElement(tag); el.className = cls; el.innerText = txt;
+        if(parent) parent.appendChild(el); return el;
     }
 
     function speak(t) {
