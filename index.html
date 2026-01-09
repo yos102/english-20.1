@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מבחן אנגלית 108 מילים - כיתה ד'</title>
+    <style>
+        :root { --primary: #4a90e2; --success: #48bb78; --error: #f56565; --bg: #f0f4f8; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; line-height: 1.6; }
+        .container { max-width: 950px; margin: auto; background: white; padding: 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2d3748; }
+        h3 { border-right: 5px solid var(--primary); padding-right: 15px; background: #f8fbff; padding: 10px; border-radius: 0 10px 10px 0; margin-top: 30px; }
+        
+        .ltr-text { direction: ltr; text-align: left; unicode-bidi: bidi-override; }
+
+        /* Matching Section */
+        .matching-container { display: flex; justify-content: space-around; margin: 20px 0; }
+        .column { display: flex; flex-direction: column; gap: 10px; }
+        .match-item { 
+            padding: 10px 15px; background: #edf2f7; border: 2px solid #cbd5e0; 
+            border-radius: 10px; cursor: pointer; text-align: center; width: 140px;
+            user-select: none; transition: 0.2s; font-weight: bold;
+        }
+        .match-item.selected { background: var(--primary); color: white; transform: scale(1.05); }
+        .match-item.correct { background: var(--success) !important; color: white !important; cursor: default; }
+        .match-item.wrong { background: var(--error) !important; color: white !important; }
+
+        /* Drag and Drop */
+        .drop-zone { 
+            display: inline-block; min-width: 100px; padding: 5px; min-height: 30px; border-bottom: 3px solid var(--primary); 
+            margin: 0 5px; vertical-align: middle; text-align: center; background: #f7fafc; border-radius: 5px 5px 0 0;
+        }
+        .drop-zone.wrong-ans { border-bottom: 3px solid var(--error); background: #fff5f5; color: var(--error); }
+        .drop-zone.correct-ans { border-bottom: 3px solid var(--success); background: #f0fff4; color: var(--success); }
+        
+        .correction-text { color: var(--success); font-weight: bold; font-size: 0.9em; margin-right: 5px; }
+
+        .drag-item { 
+            display: inline-block; padding: 8px 16px; background: white; border: 2px solid var(--primary);
+            border-radius: 12px; cursor: grab; margin: 5px; font-weight: bold; color: var(--primary);
+            user-select: none;
+        }
+        .word-bank { background: #fff9c4; padding: 20px; border-radius: 15px; margin: 20px 0; text-align: center; border: 2px dashed #fbc02d; min-height: 50px; }
+
+        /* Images Grid */
+        .img-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 15px; }
+        .img-card { background: #f8fbff; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #e2e8f0; }
+        .emoji-img { font-size: 60px; line-height: 80px; display: block; margin-bottom: 10px; }
+        
+        .img-drop-zone {
+            width: 85%; margin: 10px auto; padding: 10px; border: 2px dashed var(--primary);
+            border-radius: 10px; background: white; min-height: 40px; font-weight: bold; color: #a0aec0;
+        }
+        .img-drop-zone.filled { color: var(--primary); border-style: solid; background: #eafaf1; }
+        .img-drop-zone.wrong-ans { border-color: var(--error); color: var(--error); background: #fff5f5; }
+        .img-drop-zone.correct-ans { border-color: var(--success); color: var(--success); background: #f0fff4; }
+
+        .btn-check { display: block; width: 100%; padding: 20px; background: #2d3748; color: white; border: none; border-radius: 15px; font-size: 1.4em; cursor: pointer; margin-top: 40px; }
+        .btn-check:hover { background: #1a202c; }
+        
+        #final-result { display:none; text-align:center; margin-top:30px; padding:20px; border-radius:15px; font-size: 1.5rem; }
+        .btn-reload { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; margin-top: 15px; font-size: 1rem; }
+
+        .speak-btn {
+            background: none; border: none; cursor: pointer; font-size: 1.2rem; margin-left: 10px; vertical-align: middle;
+        }
+        .sentence-row { margin-bottom: 15px; display: flex; align-items: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>המבחן הגדול באנגלית - כיתה ד'</h1>
+    <p style="text-align: center; font-weight: bold; color: #718096;">כל 108 המילים לפי הסדר המדויק! לחץ על 🔊 לשמיעת המשפט.</p>
+
+    <div class="question-card">
+        <h3>1. משחק הזיכרון: התאם בין אנגלית לעברית</h3>
+        <div class="matching-container" id="matching-game">
+            <div class="column" id="english-cols"></div>
+            <div class="column" id="hebrew-cols"></div>
+        </div>
+    </div>
+
+    <div class="question-card">
+        <h3>2. השלם את המשפטים (גרור מהמחסן הצהוב)</h3>
+        <div id="sentence-bank" class="word-bank"></div>
+        <div id="drag-questions" class="ltr-text"></div>
+    </div>
+
+    <div class="question-card">
+        <h3>3. מה בתמונה? (גרור מהמחסן הצהוב)</h3>
+        <div id="img-bank" class="word-bank"></div>
+        <div id="image-questions" class="img-grid"></div>
+    </div>
+
+    <button class="btn-check" id="main-check-btn" onclick="calculateGrade()">סיימתי! בדוק לי את הציון 📝</button>
+    
+    <div id="final-result"></div>
+</div>
+
+<script>
+    const fullMasterList = [
+        // דף 1
+        { en: "food", he: "אוכל", emoji: "🍱" }, { en: "drinks", he: "שתייה", emoji: "🥤" }, { en: "chocolate", he: "שוקולד", emoji: "🍫" },
+        { en: "coffee", he: "קפה", emoji: "☕" }, { en: "cookie", he: "עוגייה", emoji: "🍪" }, { en: "jam", he: "ריבה", emoji: "🍯" },
+        { en: "juice", he: "מיץ", emoji: "🧃" }, { en: "salad", he: "סלט", emoji: "🥗" }, { en: "sandwich", he: "סנדוויץ'", emoji: "🥪" },
+        { en: "tea", he: "תה", emoji: "🍵" }, { en: "water", he: "מים", emoji: "💧" }, { en: "apple", he: "תפוח", emoji: "🍎" },
+        { en: "lemon", he: "לימון", emoji: "🍋" }, { en: "pizza", he: "פיצה", emoji: "🍕" }, { en: "egg", he: "ביצה", emoji: "🥚" },
+        { en: "drink", he: "לשתות", emoji: "🥛" }, { en: "eat", he: "לאכול", emoji: "🍽️" },
+        // דף 2
+        { en: "sister", he: "אחות", emoji: "👧" }, { en: "dad", he: "אבא", emoji: "👨" }, { en: "baby", he: "תינוק", emoji: "👶" },
+        { en: "mom", he: "אמא", emoji: "👩" }, { en: "bananas", he: "בננות", emoji: "🍌" }, { en: "milk", he: "חלב", emoji: "🍼" },
+        { en: "grandmother", he: "סבתא", emoji: "👵" }, { en: "grandfather", he: "סבא", emoji: "👴" }, { en: "family", he: "👨‍👩‍👧‍👦" },
+        { en: "cheese", he: "גבינה", emoji: "🧀" }, { en: "chicken", he: "עוף", emoji: "🍗" }, { en: "children", he: "ילדים", emoji: "🧒" },
+        { en: "chips", he: "צ'יפס", emoji: "🍟" }, { en: "kitchen", he: "מטבח", emoji: "🍳" }, { en: "spinach", he: "תרד", emoji: "🥬" },
+        { en: "chair", he: "כיסא", emoji: "🪑" }, { en: "teacher", he: "מורה", emoji: "👩‍🏫" }, { en: "what do you want?", he: "מה אתה רוצה?", emoji: "❓" },
+        // דף 3
+        { en: "under", he: "מתחת", emoji: "📦" }, { en: "on", he: "על", emoji: "🔝" }, { en: "in", he: "בתוך", emoji: "📥" },
+        { en: "I like", he: "אני אוהב", emoji: "👍" }, { en: "I don't like", he: "אני לא אוהב", emoji: "👎" }, { en: "bread", he: "לחם", emoji: "🍞" },
+        { en: "fish", he: "דג", emoji: "🐟" }, { en: "hungry", he: "רעב", emoji: "😋" }, { en: "meat", he: "בשר", emoji: "🥩" },
+        { en: "restaurant", he: "מסעדה", emoji: "🍴" }, { en: "I'm hungry", he: "אני רעב", emoji: "🥣" }, { en: "both", he: "שניהם", emoji: "👭" },
+        { en: "jam", he: "ריבה", emoji: "🍯" }, { en: "I want", he: "אני רוצה", emoji: "🙋" }, { en: "shop", he: "חנות", emoji: "🏪" },
+        { en: "milkshake", he: "מילקשייק", emoji: "🥤" }, { en: "short", he: "קצר/נמוך", emoji: "📏" }, { en: "wash", he: "לשטוף", emoji: "🧼" },
+        { en: "share", he: "לחלוק", emoji: "🤝" },
+        // דף 4
+        { en: "(to) shop", he: "לקנות", emoji: "🛒" }, { en: "shopping", he: "קניות", emoji: "🛍️" }, { en: "I need", he: "אני צריך", emoji: "🛐" },
+        { en: "I have", he: "יש לי", emoji: "🤲" }, { en: "I want", he: "אני רוצה", emoji: "🙋‍♂️" }, { en: "carrot", he: "גזר", emoji: "🥕" },
+        { en: "fruit", he: "פירות", emoji: "🍇" }, { en: "onion", he: "בצל", emoji: "🧅" }, { en: "peppers", he: "פלפלים", emoji: "🫑" },
+        { en: "table", he: "שולחן", emoji: "🧱" }, { en: "tomato", he: "עגבנייה", emoji: "🍅" }, { en: "vegetables", he: "ירקות", emoji: "🥦" },
+        { en: "tuna fish", he: "טונה", emoji: "🥫" }, { en: "cake", he: "עוגה", emoji: "🎂" }, { en: "list", he: "רשימה", emoji: "📋" },
+        { en: "put", he: "לשים", emoji: "📥" }, { en: "birthday", he: "יום הולדת", emoji: "🎈" }, { en: "mouth", he: "פה", emoji: "👄" }, { en: "teeth", he: "שיניים", emoji: "🦷" },
+        // דף 5
+        { en: "thirsty", he: "צמא", emoji: "🥵" }, { en: "brother", he: "אח", emoji: "👦" }, { en: "father", he: "אבא", emoji: "👨‍💼" },
+        { en: "mother", he: "אמא", emoji: "👩‍💼" }, { en: "sing", he: "לשיר", emoji: "🎤" }, { en: "party", he: "מסיבה", emoji: "🥳" },
+        { en: "gift", he: "מתנה", emoji: "🎁" }, { en: "thank you", he: "תודה", emoji: "🙏" }, { en: "color", he: "צבע", emoji: "🎨" },
+        { en: "number", he: "מספר", emoji: "🔢" }, { en: "favorite", he: "אהוב", emoji: "💖" },
+        { en: "eleven", he: "11" }, { en: "twelve", he: "12" }, { en: "thirteen", he: "13" }, { en: "fourteen", he: "14" },
+        { en: "fifteen", he: "15" }, { en: "sixteen", he: "16" }, { en: "seventeen", he: "17" }, { en: "eighteen", he: "18" },
+        // דף 6
+        { en: "nineteen", he: "19" }, { en: "twenty", he: "20" },
+        { en: "Sunday", he: "יום ראשון", emoji: "🗓️" }, { en: "Monday", he: "יום שני", emoji: "🗓️" }, { en: "Tuesday", he: "יום שלישי", emoji: "🗓️" },
+        { en: "Wednesday", he: "יום רביעי", emoji: "🗓️" }, { en: "Thursday", he: "יום חמישי", emoji: "🗓️" }, { en: "Friday", he: "יום שישי", emoji: "🗓️" },
+        { en: "Saturday", he: "יום שבת", emoji: "🗓️" }, { en: "what day is today?", he: "איזה יום היום?", emoji: "❓" },
+        { en: "yesterday", he: "אתמול", emoji: "⏪" }, { en: "today", he: "היום", emoji: "🔽" }, { en: "breakfast", he: "ארוחת בוקר", emoji: "🍳" },
+        { en: "lunch", he: "ארוחת צהריים", emoji: "🍱" }, { en: "dinner", he: "ארוחת ערב", emoji: "🥘" }, { en: "what time is it?", he: "מה השעה?", emoji: "⌚" },
+        { en: "ice cream", he: "גלידה", emoji: "🍦" }, { en: "tomorrow", he: "מחר", emoji: "⏩" }
+    ];
+
+    const allSentences = [
+        { q: "I sit on a ____.", a: "chair" },
+        { q: "The baby drinks ____.", a: "milk" },
+        { q: "I'm ____, I want to drink water.", a: "thirsty" },
+        { q: "I eat a ____ for breakfast.", a: "egg" },
+        { q: "My ____ is a teacher.", a: "mom" },
+        { q: "We have a ____ today! 🎈", a: "party" },
+        { q: "I am ____, I want to eat pizza.", a: "hungry" },
+        { q: "I have a ____ for your birthday.", a: "gift" },
+        { q: "I like ____ with my hamburger.", a: "chips" },
+        { q: "A ____ is red and round.", a: "tomato" },
+        { q: "We go ____ on Fridays.", a: "shopping" },
+        { q: "I like to ____ a happy song.", a: "sing" },
+        { q: "My ____ is 10 years old.", a: "sister" },
+        { q: "I like sweet chocolate ____.", a: "chocolate" },
+        { q: "Can I have some orange ____? 🍎", a: "juice" },
+        { q: "The dog is ____ the table.", a: "under" },
+        { q: "I put red ____ on the bread.", a: "jam" },
+        { q: "I ____ a new pencil for school.", a: "need" }
+    ];
+
+    let correctMatchesCount = 0;
+    let selectedEng = null;
+    let wordsUsedInOtherTasks = new Set();
+
+    function speak(text) {
+        const msg = new SpeechSynthesisUtterance();
+        msg.text = text.replace("____", "blank");
+        msg.lang = 'en-US';
+        window.speechSynthesis.speak(msg);
+    }
+
+    function init() {
+        const selectedSentences = [...allSentences].sort(() => 0.5 - Math.random()).slice(0, 8);
+        const selectedEmojis = fullMasterList.filter(x => x.emoji).sort(() => 0.5 - Math.random()).slice(0, 8);
+
+        selectedSentences.forEach(s => wordsUsedInOtherTasks.add(s.a));
+        selectedEmojis.forEach(e => wordsUsedInOtherTasks.add(e.en));
+
+        const unusedWords = fullMasterList.filter(w => !wordsUsedInOtherTasks.has(w.en));
+        const matchPool = [...unusedWords.sort(() => 0.5 - Math.random()).slice(0, 8)];
+        
+        const engCols = document.getElementById('english-cols');
+        const hebCols = document.getElementById('hebrew-cols');
+        const shuffledHeb = [...matchPool].sort(() => 0.5 - Math.random());
+
+        matchPool.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'match-item';
+            div.innerText = item.en;
+            div.dataset.val = item.en;
+            div.onclick = () => {
+                if(div.classList.contains('correct')) return;
+                if(selectedEng) selectedEng.classList.remove('selected');
+                selectedEng = div;
+                div.classList.add('selected');
+            };
+            engCols.appendChild(div);
+        });
+
+        shuffledHeb.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'match-item';
+            div.innerText = item.he;
+            div.onclick = () => {
+                if(div.classList.contains('correct')) return;
+                if(selectedEng) {
+                    const engVal = selectedEng.dataset.val;
+                    if(fullMasterList.find(v => v.en === engVal).he === item.he) {
+                        selectedEng.className = 'match-item correct';
+                        div.className = 'match-item correct';
+                        selectedEng = null;
+                        correctMatchesCount++;
+                    }
+                }
+            };
+            hebCols.appendChild(div);
+        });
+
+        const sBank = document.getElementById('sentence-bank');
+        const sQuest = document.getElementById('drag-questions');
+        selectedSentences.forEach((s, idx) => {
+            sBank.appendChild(createDragItem(s.a));
+            const div = document.createElement('div');
+            div.className = "sentence-row";
+            div.innerHTML = `
+                <button class="speak-btn" onclick="speak('${s.q}')">🔊</button>
+                <span>${s.q.replace('____', `<div class="drop-zone" data-ans="${s.a}" id="s-zone-${idx}" ondrop="drop(event)" ondragover="allowDrop(event)"></div>`)}</span>
+            `;
+            sQuest.appendChild(div);
+        });
+
+        const iBank = document.getElementById('img-bank');
+        const iQuest = document.getElementById('image-questions');
+        selectedEmojis.forEach((item, idx) => {
+            iBank.appendChild(createDragItem(item.en));
+            const card = document.createElement('div');
+            card.className = 'img-card';
+            card.innerHTML = `
+                <span class="emoji-img">${item.emoji}</span>
+                <div class="img-drop-zone" id="i-zone-${idx}" data-ans="${item.en}" ondrop="drop(event)" ondragover="allowDrop(event)">גרור לכאן...</div>
+            `;
+            iQuest.appendChild(card);
+        });
+        
+        shuffleChildren(sBank);
+        shuffleChildren(iBank);
+    }
+
+    function createDragItem(text) {
+        const div = document.createElement('div');
+        div.className = 'drag-item';
+        div.innerText = text;
+        div.draggable = true;
+        div.ondragstart = (e) => e.dataTransfer.setData("text", text);
+        return div;
+    }
+
+    function shuffleChildren(parent) {
+        for (let i = parent.children.length; i >= 0; i--) {
+            parent.appendChild(parent.children[Math.random() * i | 0]);
+        }
+    }
+
+    function allowDrop(e) { e.preventDefault(); }
+    
+    function drop(e) {
+        e.preventDefault();
+        const data = e.dataTransfer.getData("text");
+        e.target.innerText = data;
+        e.target.classList.add('filled');
+    }
+
+    function calculateGrade() {
+        let finalScore = 0;
+        const totalMatch = 8;
+        const totalSent = 8;
+        const totalImg = 8;
+
+        document.querySelectorAll('.match-item').forEach(item => {
+            if(!item.classList.contains('correct')) item.classList.add('wrong');
+        });
+        finalScore += (correctMatchesCount / totalMatch) * 30;
+
+        let correctS = 0;
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            if(zone.innerText.trim() === zone.dataset.ans) {
+                correctS++;
+                zone.className = "drop-zone correct-ans";
+            } else {
+                zone.className = "drop-zone wrong-ans";
+                const span = document.createElement('span');
+                span.className = "correction-text";
+                span.innerText = ` (${zone.dataset.ans})`;
+                zone.after(span);
+            }
+        });
+        finalScore += (correctS / totalSent) * 35;
+
+        let correctI = 0;
+        document.querySelectorAll('.img-drop-zone').forEach(zone => {
+            if(zone.innerText.trim() === zone.dataset.ans) {
+                correctI++;
+                zone.className = "img-drop-zone correct-ans";
+            } else {
+                zone.className = "img-drop-zone wrong-ans";
+                zone.innerText += ` -> ${zone.dataset.ans}`;
+            }
+        });
+        finalScore += (correctI / totalImg) * 35;
+
+        const resultDiv = document.getElementById('final-result');
+        resultDiv.style.display = "block";
+        const total = Math.round(finalScore);
+        resultDiv.innerHTML = `
+            <h2>הציון שלך: ${total}</h2>
+            <p>${total >= 90 ? "מדהים! פשוט אלוף!" : "כל הכבוד! תמשיך להתאמן!"}</p>
+            <button class="btn-reload" onclick="location.reload()">מבחן חדש (מילים אחרות) 🔄</button>
+        `;
+        document.getElementById('main-check-btn').style.display = 'none';
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    init();
+</script>
+</body>
+</html>
