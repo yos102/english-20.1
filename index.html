@@ -2,59 +2,68 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>מבחן אנגלית - כיתה ז'</title>
     <style>
         :root { --primary: #4a90e2; --success: #48bb78; --error: #f56565; --bg: #f0f4f8; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; line-height: 1.6; padding-bottom: 60px; overflow-x: hidden; }
-        .container { max-width: 950px; margin: auto; background: white; padding: 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); position: relative; z-index: 1; }
-        h1, h3 { color: #2d3748; text-align: center; }
-        h3 { border-right: 5px solid var(--primary); padding-right: 15px; background: #f8fbff; padding: 10px; border-radius: 0 10px 10px 0; margin-top: 30px; text-align: right; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; line-height: 1.6; padding-bottom: 60px; overflow-x: hidden; touch-action: manipulation; }
+        .container { max-width: 950px; margin: auto; background: white; padding: 15px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; z-index: 1; }
+        h1 { color: #2d3748; text-align: center; font-size: 1.5rem; }
+        h3 { border-right: 5px solid var(--primary); padding-right: 15px; background: #f8fbff; padding: 10px; border-radius: 0 10px 10px 0; margin-top: 25px; text-align: right; font-size: 1.1rem; }
         
         /* Matching System */
-        .matching-wrapper { position: relative; margin: 20px 0; }
-        #match-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 1; }
-        .matching-container { display: flex; justify-content: space-between; align-items: flex-start; padding: 0 50px; }
-        .column { display: flex; flex-direction: column; gap: 15px; z-index: 2; }
+        .matching-wrapper { position: relative; margin: 20px 0; min-height: 400px; }
+        #match-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 1; width: 100%; height: 100%; }
+        .matching-container { display: flex; justify-content: space-between; align-items: flex-start; padding: 0 10px; gap: 20px; }
+        .column { display: flex; flex-direction: column; gap: 12px; z-index: 2; width: 45%; }
         
         .match-item { 
-            padding: 12px; background: #edf2f7; border: 2px solid #cbd5e0; border-radius: 10px; 
-            cursor: pointer; text-align: center; width: 130px; font-weight: bold; transition: 0.2s; position: relative;
+            padding: 10px 5px; background: #edf2f7; border: 2px solid #cbd5e0; border-radius: 10px; 
+            cursor: pointer; text-align: center; font-weight: bold; transition: 0.2s; position: relative;
+            font-size: 0.9rem; word-break: break-word; min-height: 40px; display: flex; align-items: center; justify-content: center;
         }
-        .match-item.selected { background: var(--primary); color: white; border-color: #2b6cb0; }
+        .match-item.selected { background: var(--primary); color: white; border-color: #2b6cb0; transform: scale(1.05); }
         .match-item.checked-correct { background: var(--success) !important; color: white !important; border-color: #38a169; }
         .match-item.checked-wrong { background: var(--error) !important; color: white !important; border-color: #c53030; }
 
-        /* Drag and Drop */
-        .word-bank { background: #fff9c4; padding: 20px; border-radius: 15px; margin: 20px 0; text-align: center; border: 2px dashed #fbc02d; }
+        /* Drag and Drop / Click to Fill */
+        .word-bank { background: #fff9c4; padding: 15px; border-radius: 15px; margin: 15px 0; text-align: center; border: 2px dashed #fbc02d; }
         .drag-item { 
-            display: inline-block; padding: 8px 16px; background: white; border: 2px solid var(--primary);
-            border-radius: 12px; cursor: grab; margin: 5px; font-weight: bold; color: var(--primary);
+            display: inline-block; padding: 8px 12px; background: white; border: 2px solid var(--primary);
+            border-radius: 12px; cursor: pointer; margin: 4px; font-weight: bold; color: var(--primary); font-size: 0.9rem;
         }
+        .drag-item.selected-item { background: var(--primary); color: white; }
         .drag-item.used { opacity: 0.2; text-decoration: line-through; pointer-events: none; filter: grayscale(1); }
 
         .drop-zone, .img-drop-zone { 
-            display: inline-block; min-width: 100px; padding: 5px; border-bottom: 3px solid var(--primary); 
-            background: #f7fafc; vertical-align: middle; text-align: center; border-radius: 5px 5px 0 0; min-height: 30px;
+            display: inline-block; min-width: 80px; padding: 5px; border-bottom: 3px solid var(--primary); 
+            background: #f7fafc; vertical-align: middle; text-align: center; border-radius: 5px 5px 0 0; min-height: 30px; cursor: pointer;
         }
-        .img-drop-zone { width: 85%; margin: 10px auto; border: 2px dashed var(--primary); color: #a0aec0; }
+        .img-drop-zone { width: 90%; margin: 8px auto; border: 2px dashed var(--primary); color: #a0aec0; }
         
         .ltr-text { direction: ltr; text-align: left; }
+        .sentence-row { margin-bottom: 15px; font-size: 1rem; }
         .correct-ans { border-color: var(--success) !important; color: var(--success); background: #f0fff4; }
         .wrong-ans { border-color: var(--error) !important; color: var(--error); background: #fff5f5; }
-        .correction-text { color: var(--success); font-weight: bold; font-size: 0.9em; margin-left: 5px; }
+        .correction-text { color: var(--success); font-weight: bold; font-size: 0.85em; margin-left: 5px; display: block; }
 
-        .img-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
-        .img-card { background: #f8fbff; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #e2e8f0; }
-        .emoji-img { font-size: 50px; display: block; }
+        .img-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .img-card { background: #f8fbff; padding: 10px; border-radius: 15px; text-align: center; border: 1px solid #e2e8f0; }
+        .emoji-img { font-size: 40px; display: block; }
 
-        .btn-check { width: 100%; padding: 20px; background: #2d3748; color: white; border: none; border-radius: 15px; font-size: 1.4em; cursor: pointer; margin-top: 40px; transition: 0.3s; }
-        .btn-check:hover { background: #1a202c; transform: translateY(-2px); }
+        .btn-check { width: 100%; padding: 15px; background: #2d3748; color: white; border: none; border-radius: 15px; font-size: 1.2em; cursor: pointer; margin-top: 30px; transition: 0.3s; }
         
-        #final-result { display:none; text-align:center; margin-top:30px; padding:30px; border-radius:20px; background: #edf2f7; }
-        .feedback-icon { font-size: 4rem; display: block; margin-bottom: 10px; }
-        .speak-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; }
-        footer { position: fixed; bottom: 10px; left: 20px; font-size: 0.8rem; color: #a0aec0; }
+        #final-result { display:none; text-align:center; margin-top:25px; padding:20px; border-radius:20px; background: #edf2f7; }
+        .feedback-icon { font-size: 3.5rem; display: block; }
+        .speak-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; padding: 5px; }
+        footer { position: relative; margin-top: 20px; text-align: center; font-size: 0.8rem; color: #a0aec0; }
+
+        @media (max-width: 480px) {
+            .matching-container { padding: 0; }
+            .column { gap: 8px; }
+            .match-item { font-size: 0.8rem; padding: 8px 4px; }
+            h1 { font-size: 1.3rem; }
+        }
     </style>
 </head>
 <body>
@@ -62,7 +71,7 @@
 <div class="container">
     <h1>המבחן הגדול באנגלית - כיתה ז'</h1>
     
-    <h3>1. התאם בין המילים (בחרו זוגות, הבדיקה בסוף)</h3>
+    <h3>1. התאם בין המילים (לחץ על אנגלית ואז עברית)</h3>
     <div class="matching-wrapper">
         <canvas id="match-canvas"></canvas>
         <div class="matching-container">
@@ -71,7 +80,7 @@
         </div>
     </div>
 
-    <h3>2. השלם את המשפטים</h3>
+    <h3>2. השלם את המשפטים (לחץ על מילה ואז על הקו)</h3>
     <div id="s-bank" class="word-bank"></div>
     <div id="s-questions" class="ltr-text"></div>
 
@@ -89,7 +98,7 @@
     </div>
 </div>
 
-<footer>eng 20.3 | © 2026</footer>
+<footer>eng 20.4 | © 2026</footer>
 
 <script>
     const fullList = [
@@ -117,8 +126,9 @@
     ];
 
     let selectedEng = null;
+    let selectedWord = null;
     let connections = [];
-    const size = 8;
+    const size = 6; // הקטנה ל-6 להתאמה טובה יותר למסך קטן
     let isChecked = false;
 
     const shuffle = (arr) => arr.sort(() => 0.5 - Math.random());
@@ -146,10 +156,7 @@
             div.dataset.val = item.he;
             div.onclick = () => {
                 if(!selectedEng || isChecked) return;
-                
-                // הסרת חיבור קיים אם אחד הצדדים כבר תפוס
                 connections = connections.filter(c => c.from !== selectedEng && c.to !== div);
-                
                 connections.push({from: selectedEng, to: div, eng: selectedEng.dataset.val, heb: div.dataset.val});
                 selectedEng.classList.remove('selected');
                 selectedEng = null;
@@ -159,15 +166,22 @@
 
         renderSection('s', selSentences.map(x=>x.a), selSentences);
         renderSection('i', selEmojis.map(x=>x.en), selEmojis);
+        
         window.addEventListener('resize', drawLines);
+        window.addEventListener('scroll', drawLines);
     }
 
     function renderSection(prefix, words, qs) {
         const bank = document.getElementById(`${prefix}-bank`), cont = document.getElementById(`${prefix}-questions`);
         shuffle(words).forEach(w => {
             const it = createEl('div', 'drag-item', w, bank);
-            it.draggable = true; it.id = `${prefix}-${w}`;
-            it.ondragstart = (e) => e.dataTransfer.setData("text", `${w}|${prefix}`);
+            it.id = `${prefix}-${w}`;
+            it.onclick = () => {
+                if(isChecked) return;
+                if(selectedWord) selectedWord.classList.remove('selected-item');
+                selectedWord = it;
+                it.classList.add('selected-item');
+            };
         });
 
         qs.forEach(q => {
@@ -175,40 +189,46 @@
             if(prefix === 's') {
                 d.className = "sentence-row";
                 d.innerHTML = `<button class="speak-btn" onclick="speak('${q.q}')">🔊</button> 
-                               <span>${q.q.replace('____', `<div class="drop-zone" data-ans="${q.a}" ondrop="drop(event)" ondragover="allowDrop(event)"></div>`)}</span>`;
+                               <span>${q.q.replace('____', `<div class="drop-zone" data-ans="${q.a}" onclick="handleFill(this, 's')"></div>`)}</span>`;
             } else {
                 d.className = "img-card";
                 d.innerHTML = `<span class="emoji-img">${q.emoji}</span>
-                               <div class="img-drop-zone" data-ans="${q.en}" ondrop="drop(event)" ondragover="allowDrop(event)">גרור...</div>`;
+                               <div class="img-drop-zone" data-ans="${q.en}" onclick="handleFill(this, 'i')">לחץ למילוי</div>`;
             }
             cont.appendChild(d);
         });
     }
 
-    function drop(e) {
-        e.preventDefault();
-        if(isChecked) return;
-        const [word, prefix] = e.dataTransfer.getData("text").split("|");
-        const zone = e.target;
-        if(zone.innerText && zone.innerText !== "גרור...") {
+    function handleFill(zone, prefix) {
+        if(isChecked || !selectedWord) return;
+        if(selectedWord.id.split('-')[0] !== prefix) return;
+
+        if(zone.innerText && zone.innerText !== "לחץ למילוי") {
             document.getElementById(`${prefix}-${zone.innerText}`)?.classList.remove('used');
         }
-        zone.innerText = word; zone.style.color = "var(--primary)";
-        document.getElementById(`${prefix}-${word}`).classList.add('used');
+        
+        zone.innerText = selectedWord.innerText;
+        zone.style.color = "var(--primary)";
+        selectedWord.classList.add('used');
+        selectedWord.classList.remove('selected-item');
+        selectedWord = null;
     }
-
-    function allowDrop(e) { e.preventDefault(); }
 
     function drawLines() {
         const canvas = document.getElementById('match-canvas');
         const ctx = canvas.getContext('2d');
         const container = document.querySelector('.matching-wrapper');
-        canvas.width = container.offsetWidth; canvas.height = container.offsetHeight;
+        
+        // הגדרת גודל קנבס לפי גודל הקונטיינר האמיתי
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
         
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const contRect = container.getBoundingClientRect();
+
         connections.forEach(conn => {
-            const rect1 = conn.from.getBoundingClientRect(), rect2 = conn.to.getBoundingClientRect();
-            const contRect = container.getBoundingClientRect();
+            const rect1 = conn.from.getBoundingClientRect();
+            const rect2 = conn.to.getBoundingClientRect();
             
             ctx.beginPath();
             ctx.moveTo(rect1.right - contRect.left, rect1.top + rect1.height/2 - contRect.top);
@@ -230,7 +250,6 @@
         isChecked = true;
         let sCorr = 0, iCorr = 0, mCorr = 0;
 
-        // בדיקת התאמות (Matching)
         connections.forEach(conn => {
             const correctHeb = fullList.find(f => f.en === conn.eng).he;
             if(conn.heb === correctHeb) {
@@ -244,13 +263,12 @@
         });
         drawLines();
 
-        // בדיקת גרירה
         document.querySelectorAll('.drop-zone, .img-drop-zone').forEach(z => {
             const ok = z.innerText.trim() === z.dataset.ans;
             z.className += ok ? " correct-ans" : " wrong-ans";
             if(ok) z.classList.contains('drop-zone') ? sCorr++ : iCorr++;
             else {
-                if(z.classList.contains('drop-zone')) z.insertAdjacentHTML('afterend', `<span class="correction-text">(${z.dataset.ans})</span>`);
+                if(z.classList.contains('drop-zone')) z.insertAdjacentHTML('afterend', `<span class="correction-text">תשובה: ${z.dataset.ans}</span>`);
                 else z.innerText = `❌ (${z.dataset.ans})`;
             }
         });
@@ -264,12 +282,12 @@
         document.getElementById('grade-text').innerText = `הציון שלך: ${score}`;
         document.getElementById('main-btn').style.display = 'none';
 
-        if(score >= 95) { emoji.innerText = "👑"; msg.innerText = "וואו! אתה פשוט אלוף העולם באנגלית!"; }
-        else if(score >= 85) { emoji.innerText = "🌟"; msg.innerText = "כל הכבוד! ציון מצוין, אתה שולט בחומר!"; }
-        else if(score >= 70) { emoji.innerText = "👍"; msg.innerText = "עבודה טובה! עוד קצת תרגול ותהיה מושלם."; }
-        else { emoji.innerText = "💪"; msg.innerText = "אל תתייאש, כל תרגול מקדם אותך. נסה שוב!"; }
+        if(score >= 95) { emoji.innerText = "👑"; msg.innerText = "וואו! אתה אלוף!"; }
+        else if(score >= 85) { emoji.innerText = "🌟"; msg.innerText = "כל הכבוד! ציון מצוין!"; }
+        else if(score >= 70) { emoji.innerText = "👍"; msg.innerText = "עבודה טובה! המשך לתרגל."; }
+        else { emoji.innerText = "💪"; msg.innerText = "נסה שוב, אתה יכול להצליח!"; }
         
-        window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+        res.scrollIntoView({ behavior: 'smooth' });
     }
 
     function createEl(tag, cls, txt, parent) {
