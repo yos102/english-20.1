@@ -128,7 +128,7 @@
     let selectedEng = null;
     let selectedWord = null;
     let connections = [];
-    const size = 6; // הקטנה ל-6 להתאמה טובה יותר למסך קטן
+    const size = 6; 
     let isChecked = false;
 
     const shuffle = (arr) => arr.sort(() => 0.5 - Math.random());
@@ -168,7 +168,6 @@
         renderSection('i', selEmojis.map(x=>x.en), selEmojis);
         
         window.addEventListener('resize', drawLines);
-        window.addEventListener('scroll', drawLines);
     }
 
     function renderSection(prefix, words, qs) {
@@ -204,7 +203,8 @@
         if(selectedWord.id.split('-')[0] !== prefix) return;
 
         if(zone.innerText && zone.innerText !== "לחץ למילוי") {
-            document.getElementById(`${prefix}-${zone.innerText}`)?.classList.remove('used');
+            const oldWord = document.getElementById(`${prefix}-${zone.innerText}`);
+            if(oldWord) oldWord.classList.remove('used');
         }
         
         zone.innerText = selectedWord.innerText;
@@ -219,7 +219,6 @@
         const ctx = canvas.getContext('2d');
         const container = document.querySelector('.matching-wrapper');
         
-        // הגדרת גודל קנבס לפי גודל הקונטיינר האמיתי
         canvas.width = container.clientWidth;
         canvas.height = container.clientHeight;
         
@@ -304,5 +303,3 @@
 </script>
 </body>
 </html>
-
-
