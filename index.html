@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>מבחן אנגלית - מאגר מורחב</title>
+    <title>מבחן אנגלית כיתה ד 20.1</title>
     <style>
         :root { --primary: #4a90e2; --success: #48bb78; --error: #f56565; --bg: #f0f4f8; }
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg); margin: 0; padding: 10px; line-height: 1.6; padding-bottom: 60px; overflow-x: hidden; touch-action: manipulation; text-align: right; }
@@ -65,7 +65,7 @@
 <body>
 
 <div class="container">
-    <h1>מבחן אנגלית - מאגר 65 משפטים</h1>
+    <h1>מבחן אנגלית כיתה ד 20.1</h1>
     
     <h3>1. התאם בין המילה לעברית</h3>
     <div class="matching-container">
@@ -91,10 +91,9 @@
     </div>
 </div>
 
-<footer>© 2026 - מבוסס על 108 מילים מהתמונות</footer>
+<footer>מבחן אנגלית כיתה ד 20.1</footer>
 
 <script>
-    // רשימת המילים המלאה (108)
     const fullList = [
         { en: "food", he: "אוכל", emoji: "🍲" }, { en: "drinks", he: "שתייה", emoji: "🥤" },
         { en: "chocolate", he: "שוקולד", emoji: "🍫" }, { en: "coffee", he: "קפה", emoji: "☕" },
@@ -152,7 +151,6 @@
         { en: "dinner", he: "ארוחת ערב", emoji: "🥗" }, { en: "what time is it?", he: "מה השעה?", emoji: "⌚" }
     ];
 
-    // מאגר מלא של 65 משפטים (לא השתנה)
     const allSentences = [
         { q: "I eat ____ in the morning.", a: "breakfast" },
         { q: "My ____ is my dad's wife.", a: "mother" },
@@ -221,13 +219,10 @@
         { q: "Blue is my favorite ____.", a: "color" }
     ];
 
-    // לוגיקה לקביעת כמות השאלות המוצגות לפי מכשיר
     let isSmallMobile = window.innerWidth <= 480;
-    
-    // כמויות לתצוגה:
-    let sizeMatch = isSmallMobile ? 6 : 8;     // חלק 1: התאמה (6 בטלפון, 8 במחשב)
-    let sizeSentences = 8;                    // חלק 2: משפטים (תמיד 8)
-    let sizeImages = isSmallMobile ? 6 : 8;    // חלק 3: אימוג'י (6 בטלפון, 8 במחשב)
+    let sizeMatch = isSmallMobile ? 6 : 8;
+    let sizeSentences = 8;
+    let sizeImages = isSmallMobile ? 6 : 8;
 
     let selectedEng = null;
     let selectedWord = null;
@@ -239,17 +234,13 @@
     const shuffle = (arr) => arr.sort(() => 0.5 - Math.random());
 
     function init() {
-        // בחירת שאלות מתוך המאגר המלא
         const selSentences = shuffle([...allSentences]).slice(0, sizeSentences);
         const selEmojis = shuffle(fullList.filter(x => x.emoji)).slice(0, sizeImages);
-        
-        // כדי שלא יהיו אותן מילים בשני חלקים שונים:
         const usedInQuiz = new Set([...selSentences.map(s=>s.a), ...selEmojis.map(e=>e.en)]);
         const selMatch = shuffle(fullList.filter(w => !usedInQuiz.has(w.en))).slice(0, sizeMatch);
 
         const eCol = document.getElementById('eng-col'), hCol = document.getElementById('heb-col');
         
-        // יצירת חלק 1: התאמה
         selMatch.forEach(item => {
             const div = createEl('div', 'match-item', item.en, eCol);
             div.dataset.val = item.en;
@@ -274,7 +265,6 @@
             };
         });
 
-        // יצירת חלק 2 ו-3
         renderSection('s', selSentences.map(x=>x.a), selSentences);
         renderSection('i', selEmojis.map(x=>x.en), selEmojis);
     }
