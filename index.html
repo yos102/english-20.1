@@ -73,11 +73,11 @@
         <div class="column" id="heb-col"></div>
     </div>
 
-    <h3>2. השלם את המשפטים (הגרלה מהמאגר)</h3>
+    <h3>2. השלם את המשפטים</h3>
     <div id="s-bank" class="word-bank"></div>
     <div id="s-questions" class="ltr-text"></div>
 
-    <h3>3. מה המילה המתאימה?</h3>
+    <h3>3. מה המילה המתאימה לתמונה?</h3>
     <div id="i-bank" class="word-bank"></div>
     <div id="i-questions" class="img-grid"></div>
 
@@ -151,72 +151,65 @@
         { en: "dinner", he: "ארוחת ערב", emoji: "🥗" }, { en: "what time is it?", he: "מה השעה?", emoji: "⌚" }
     ];
 
+    // משפטים מופשטים יותר לכיתה ד'
     const allSentences = [
         { q: "I eat ____ in the morning.", a: "breakfast" },
         { q: "My ____ is my dad's wife.", a: "mother" },
-        { q: "A rabbit likes to eat a ____.", a: "carrot" },
+        { q: "A rabbit likes a ____.", a: "carrot" },
         { q: "The ____ is on the table.", a: "cake" },
-        { q: "I have ____ in my mouth.", a: "teeth" },
-        { q: "____ is the first day of the week.", a: "Sunday" },
-        { q: "I drink ____ when I am thirsty.", a: "water" },
-        { q: "Can I have a ____ with cheese?", a: "sandwich" },
-        { q: "I go to the ____ to buy food.", a: "shop" },
-        { q: "My ____ helps me learn English.", a: "teacher" },
-        { q: "I want a ____ of milk.", a: "drink" },
-        { q: "We have a ____ with balloons.", a: "party" },
+        { q: "I have white ____.", a: "teeth" },
+        { q: "____ is the first day.", a: "Sunday" },
+        { q: "I drink ____.", a: "water" },
+        { q: "A ____ with cheese.", a: "sandwich" },
+        { q: "Go to the ____ for food.", a: "shop" },
+        { q: "My ____ is in school.", a: "teacher" },
+        { q: "A ____ of milk.", a: "drink" },
+        { q: "A ____ with balloons.", a: "party" },
         { q: "The book is ____ the table.", a: "on" },
-        { q: "I love to ____ songs.", a: "sing" },
-        { q: "Monday is after ____.", a: "Sunday" },
+        { q: "I like to ____ songs.", a: "sing" },
         { q: "Ten plus one is ____.", a: "eleven" },
-        { q: "I eat ____ at 1:00 PM.", a: "lunch" },
-        { q: "I eat ____ at 7:00 PM.", a: "dinner" },
-        { q: "I love sweet ____.", a: "chocolate" },
-        { q: "Yellow ____ are sour.", a: "lemon" },
-        { q: "I put ____ in my tea.", a: "jam" },
+        { q: "I eat ____ at noon.", a: "lunch" },
+        { q: "I eat ____ at night.", a: "dinner" },
+        { q: "Sweet ____ is good.", a: "chocolate" },
+        { q: "A yellow ____ is sour.", a: "lemon" },
         { q: "My ____ is my mom's husband.", a: "father" },
-        { q: "We are a big ____.", a: "family" },
-        { q: "The ____ is crying.", a: "baby" },
-        { q: "I eat ____ with chips.", a: "chicken" },
+        { q: "We are a happy ____.", a: "family" },
+        { q: "The ____ is small.", a: "baby" },
+        { q: "I eat ____ and chips.", a: "chicken" },
         { q: "I like to ____ pizza.", a: "eat" },
         { q: "The cat is ____ the chair.", a: "under" },
-        { q: "I ____ like spinach. It is bad.", a: "don't like" },
-        { q: "I ____ pizza. It is good.", a: "like" },
-        { q: "Can you ____ your cookies with me?", a: "share" },
+        { q: "I ____ pizza. It's yummy.", a: "like" },
+        { q: "Can you ____ your candy?", a: "share" },
         { q: "I ____ a new pen.", a: "need" },
-        { q: "I ____ a sister and a brother.", a: "have" },
-        { q: "Please ____ the apple before you eat.", a: "wash" },
-        { q: "I go ____ for food on Friday.", a: "shopping" },
-        { q: "Tomatoes are red ____.", a: "vegetables" },
-        { q: "Apples and bananas are ____.", a: "fruit" },
-        { q: "I put a ____ in the sandwich.", a: "tomato" },
-        { q: "My ____ is my mom's mother.", a: "grandmother" },
-        { q: "My ____ is my dad's father.", a: "grandfather" },
+        { q: "I ____ a big brother.", a: "have" },
+        { q: "____ the apple before you eat.", a: "wash" },
+        { q: "Tomato is a red ____.", a: "vegetable" },
+        { q: "Apples are my favorite ____.", a: "fruit" },
+        { q: "Put a ____ in the salad.", a: "tomato" },
+        { q: "Mom's mother is my ____.", a: "grandmother" },
+        { q: "Dad's father is my ____.", a: "grandfather" },
         { q: "I want to eat. I am ____.", a: "hungry" },
-        { q: "I like ____ on my bread.", a: "cheese" },
-        { q: "Where is the ____? I want to cook.", a: "kitchen" },
-        { q: "I have a birthday ____ for you.", a: "gift" },
-        { q: "____ is the day after Thursday.", a: "Friday" },
+        { q: "I like ____ on bread.", a: "cheese" },
+        { q: "Mom is in the ____.", a: "kitchen" },
+        { q: "A birthday ____ for you.", a: "gift" },
+        { q: "____ is before Saturday.", a: "Friday" },
         { q: "Ten plus ten is ____.", a: "twenty" },
-        { q: "I write a ____ before I go to the shop.", a: "list" },
         { q: "I like orange ____.", a: "juice" },
-        { q: "____ is the day before Thursday.", a: "Wednesday" },
-        { q: "We go to a ____ to eat dinner.", a: "restaurant" },
-        { q: "My ____ is my dad's son.", a: "brother" },
-        { q: "My ____ is my mom's daughter.", a: "sister" },
-        { q: "A ____ is very small.", a: "cookie" },
-        { q: "I drink hot ____ in the morning.", a: "coffee" },
+        { q: "We eat in a ____.", a: "restaurant" },
+        { q: "My ____ is my mom's son.", a: "brother" },
+        { q: "My ____ is my dad's daughter.", a: "sister" },
+        { q: "A ____ is a small cake.", a: "cookie" },
+        { q: "I drink hot ____.", a: "coffee" },
         { q: "Nine plus four is ____.", a: "thirteen" },
         { q: "Seven plus seven is ____.", a: "fourteen" },
         { q: "Ten plus five is ____.", a: "fifteen" },
         { q: "Eight plus eight is ____.", a: "sixteen" },
         { q: "Ten plus seven is ____.", a: "seventeen" },
-        { q: "Nine plus nine is ____.", a: "eighteen" },
-        { q: "Ten plus nine is ____.", a: "nineteen" },
         { q: "Today is Tuesday, ____ was Monday.", a: "yesterday" },
-        { q: "I am ____. Can I have some juice?", a: "thirsty" },
-        { q: "The ____ are playing in the park.", a: "children" },
-        { q: "I ____ the book in my bag.", a: "put" },
-        { q: "Blue is my favorite ____.", a: "color" }
+        { q: "I am ____. Give me juice.", a: "thirsty" },
+        { q: "The ____ play in the park.", a: "children" },
+        { q: "____ the book in the bag.", a: "put" },
+        { q: "Blue is a ____.", a: "color" }
     ];
 
     let isSmallMobile = window.innerWidth <= 480;
