@@ -38,7 +38,7 @@
             background: #f7fafc; vertical-align: middle; text-align: center; border-radius: 5px 5px 0 0; min-height: 30px; cursor: pointer;
         }
         .drop-zone.drag-over, .img-drop-zone.drag-over { background: #e2e8f0; border-color: #2d3748; }
-        .img-drop-zone { width: 90%; margin: 8px auto; border: 2px dashed var(--primary); color: #a0aec0; }
+        .img-drop-zone { width: 90%; margin: 8px auto; border: 2px dashed var(--primary); color: #a0aec0; font-size: 0.8rem; }
         
         .ltr-text { direction: ltr; text-align: left; }
         .sentence-row { margin-bottom: 15px; font-size: 1rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -48,7 +48,7 @@
 
         .img-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .img-card { background: #f8fbff; padding: 10px; border-radius: 15px; text-align: center; border: 1px solid #e2e8f0; }
-        .emoji-img { font-size: 40px; display: block; }
+        .emoji-img { font-size: 40px; display: block; margin-bottom: 5px; }
 
         .btn-check { width: 100%; padding: 15px; background: #2d3748; color: white; border: none; border-radius: 15px; font-size: 1.2em; cursor: pointer; margin-top: 30px; transition: 0.3s; }
         
@@ -98,60 +98,47 @@
 
 <script>
     const fullList = [
-        { en: "food", he: "אוכל", emoji: "🍲" }, { en: "drinks", he: "שתייה", emoji: "🥤" },
         { en: "chocolate", he: "שוקולד", emoji: "🍫" }, { en: "coffee", he: "קפה", emoji: "☕" },
         { en: "cookie", he: "עוגייה", emoji: "🍪" }, { en: "jam", he: "ריבה", emoji: "🍓" },
         { en: "juice", he: "מיץ", emoji: "🧃" }, { en: "salad", he: "סלט", emoji: "🥗" },
         { en: "sandwich", he: "סנדוויץ'", emoji: "🥪" }, { en: "tea", he: "תה", emoji: "🍵" },
         { en: "water", he: "מים", emoji: "💧" }, { en: "apple", he: "תפוח", emoji: "🍎" },
         { en: "lemon", he: "לימון", emoji: "🍋" }, { en: "pizza", he: "פיצה", emoji: "🍕" },
-        { en: "egg", he: "ביצה", emoji: "🥚" }, { en: "drink", he: "לשתות", emoji: "🥛" },
-        { en: "eat", he: "לאכול", emoji: "🍽️" }, { en: "sister", he: "אחות", emoji: "👧" },
+        { en: "egg", he: "ביצה", emoji: "🥚" }, { en: "sister", he: "אחות", emoji: "👧" },
         { en: "dad", he: "אבא", emoji: "👨" }, { en: "baby", he: "תינוק", emoji: "👶" },
         { en: "mom", he: "אמא", emoji: "👩" }, { en: "bananas", he: "בננות", emoji: "🍌" },
         { en: "milk", he: "חלב", emoji: "🍼" }, { en: "grandmother", he: "סבתא", emoji: "👵" },
-        { en: "grandfather", he: "סבא", emoji: "👴" }, { en: "family", he: "משפחה", emoji: "👪" },
-        { en: "cheese", he: "גבינה", emoji: "🧀" }, { en: "chicken", he: "עוף", emoji: "🍗" },
-        { en: "children", he: "ילדים", emoji: "🧒" }, { en: "chips", he: "צ'יפס", emoji: "🍟" },
-        { en: "kitchen", he: "מטבח", emoji: "🍳" }, { en: "spinach", he: "תרד", emoji: "🌿" },
-        { en: "chair", he: "כיסא", emoji: "🪑" }, { en: "teacher", he: "מורה", emoji: "👩‍🏫" },
-        { en: "what do you want?", he: "מה אתה רוצה?", emoji: "❓" },
-        { en: "under", he: "מתחת", emoji: "⬇️" }, { en: "on", he: "על", emoji: "🔝" },
-        { en: "in", he: "בתוך", emoji: "📥" }, { en: "I like", he: "אני אוהב", emoji: "❤️" },
-        { en: "I don't like", he: "אני לא אוהב", emoji: "💔" }, { en: "bread", he: "לחם", emoji: "🍞" },
-        { en: "fish", he: "דג", emoji: "🐟" }, { en: "hungry", he: "רעב", emoji: "😋" },
-        { en: "meat", he: "בשר", emoji: "🥩" }, { en: "restaurant", he: "מסעדה", emoji: "🍴" },
-        { en: "I'm hungry", he: "אני רעב", emoji: "🥣" }, { en: "both", he: "שניהם", emoji: "👥" },
-        { en: "I want", he: "אני רוצה", emoji: "🙋" }, { en: "shop", he: "חנות", emoji: "🛒" },
-        { en: "milkshake", he: "מילקשייק", emoji: "🥤" }, { en: "short", he: "קצר/נמוך", emoji: "📏" },
-        { en: "wash", he: "לשטוף", emoji: "🧼" }, { en: "share", he: "לחלוק", emoji: "🤝" },
-        { en: "to shop", he: "לקנות", emoji: "🛍️" }, { en: "shopping", he: "קניות", emoji: "🛍️" },
-        { en: "I need", he: "אני צריך", emoji: "⚠️" }, { en: "I have", he: "יש לי", emoji: "🤲" },
-        { en: "carrot", he: "גזר", emoji: "🥕" }, { en: "fruit", he: "פירות", emoji: "🍇" },
+        { en: "grandfather", he: "סבא", emoji: "👴" }, { en: "cheese", he: "גבינה", emoji: "🧀" },
+        { en: "chicken", he: "עוף", emoji: "🍗" }, { en: "chips", he: "צ'יפס", emoji: "🍟" },
+        { en: "kitchen", he: "מטבח", emoji: "🍳" }, { en: "chair", he: "כיסא", emoji: "🪑" },
+        { en: "bread", he: "לחם", emoji: "🍞" }, { en: "fish", he: "דג", emoji: "🐟" },
+        { en: "meat", he: "בשר", emoji: "🥩" }, { en: "carrot", he: "גזר", emoji: "🥕" },
         { en: "onion", he: "בצל", emoji: "🧅" }, { en: "peppers", he: "פלפלים", emoji: "🫑" },
         { en: "table", he: "שולחן", emoji: "🟫" }, { en: "tomato", he: "עגבנייה", emoji: "🍅" },
-        { en: "vegetables", he: "ירקות", emoji: "🥦" }, { en: "tuna fish", he: "טונה", emoji: "🐟" },
-        { en: "cake", he: "עוגה", emoji: "🎂" }, { en: "list", he: "רשימה", emoji: "📜" },
-        { en: "put", he: "לשים", emoji: "📥" }, { en: "birthday", he: "יום הולדת", emoji: "🥳" },
-        { en: "mouth", he: "פה", emoji: "👄" }, { en: "teeth", he: "שיניים", emoji: "🦷" },
-        { en: "thirsty", he: "צמא", emoji: "🚰" }, { en: "brother", he: "אח", emoji: "👦" },
-        { en: "father", he: "אבא", emoji: "👨" }, { en: "mother", he: "אמא", emoji: "👩" },
-        { en: "sing", he: "לשיר", emoji: "🎤" }, { en: "party", he: "מסיבה", emoji: "🎈" },
-        { en: "gift", he: "מתנה", emoji: "🎁" }, { en: "thank you", he: "תודה", emoji: "🙏" },
-        { en: "color", he: "צבע", emoji: "🎨" }, { en: "number", he: "מספר", emoji: "🔢" },
-        { en: "favorite", he: "אהוב", emoji: "🌟" }, { en: "eleven", he: "11", emoji: "1️⃣1️⃣" },
-        { en: "twelve", he: "12", emoji: "1️⃣2️⃣" }, { en: "thirteen", he: "13", emoji: "1️⃣3️⃣" },
-        { en: "fourteen", he: "14", emoji: "1️⃣4️⃣" }, { en: "fifteen", he: "15", emoji: "1️⃣5️⃣" },
-        { en: "sixteen", he: "16", emoji: "1️⃣6️⃣" }, { en: "seventeen", he: "17", emoji: "1️⃣7️⃣" },
-        { en: "eighteen", he: "18", emoji: "1️⃣8️⃣" }, { en: "nineteen", he: "19", emoji: "1️⃣9️⃣" },
-        { en: "twenty", he: "20", emoji: "2️⃣0️⃣" }, { en: "Sunday", he: "יום ראשון", emoji: "📅" },
-        { en: "Monday", he: "יום שני", emoji: "📅" }, { en: "Tuesday", he: "יום שלישי", emoji: "📅" },
-        { en: "Wednesday", he: "יום רביעי", emoji: "📅" }, { en: "Thursday", he: "יום חמישי", emoji: "📅" },
-        { en: "Friday", he: "יום שישי", emoji: "📅" }, { en: "Saturday", he: "יום שבת", emoji: "📅" },
-        { en: "what day is today?", he: "איזה יום היום?", emoji: "❓" },
-        { en: "yesterday", he: "אתמול", emoji: "⏪" }, { en: "today", he: "היום", emoji: "⏺️" },
-        { en: "breakfast", he: "ארוחת בוקר", emoji: "🍳" }, { en: "lunch", he: "ארוחת צהריים", emoji: "🍱" },
-        { en: "dinner", he: "ארוחת ערב", emoji: "🥗" }, { en: "what time is it?", he: "מה השעה?", emoji: "⌚" }
+        { en: "cake", he: "עוגה", emoji: "🎂" }, { en: "teeth", he: "שיניים", emoji: "🦷" },
+        { en: "brother", he: "אח", emoji: "👦" }, { en: "gift", he: "מתנה", emoji: "🎁" },
+        { en: "eleven", he: "11", emoji: "1️⃣1️⃣" }, { en: "twelve", he: "12", emoji: "1️⃣2️⃣" },
+        { en: "twenty", he: "20", emoji: "2️⃣0️⃣" },
+        // מילים ללא אימוג'י (יופיעו רק בחלק 1 ו-2)
+        { en: "food", he: "אוכל" }, { en: "drinks", he: "שתייה" }, { en: "drink", he: "לשתות" },
+        { en: "eat", he: "לאכול" }, { en: "family", he: "משפחה" }, { en: "children", he: "ילדים" },
+        { en: "spinach", he: "תרד" }, { en: "teacher", he: "מורה" }, { en: "what do you want?", he: "מה אתה רוצה?" },
+        { en: "under", he: "מתחת" }, { en: "on", he: "על" }, { en: "in", he: "בתוך" },
+        { en: "I like", he: "אני אוהב" }, { en: "I don't like", he: "אני לא אוהב" },
+        { en: "hungry", he: "רעב" }, { en: "restaurant", he: "מסעדה" }, { en: "I'm hungry", he: "אני רעב" },
+        { en: "both", he: "שניהם" }, { en: "I want", he: "אני רוצה" }, { en: "shop", he: "חנות" },
+        { en: "milkshake", he: "מילקשייק" }, { en: "short", he: "קצר/נמוך" }, { en: "wash", he: "לשטוף" },
+        { en: "share", he: "לחלוק" }, { en: "to shop", he: "לקנות" }, { en: "shopping", he: "קניות" },
+        { en: "I need", he: "אני צריך" }, { en: "I have", he: "יש לי" }, { en: "fruit", he: "פירות" },
+        { en: "vegetables", he: "ירקות" }, { en: "list", he: "רשימה" }, { en: "put", he: "לשים" },
+        { en: "birthday", he: "יום הולדת" }, { en: "mouth", he: "פה" }, { en: "thirsty", he: "צמא" },
+        { en: "sing", he: "לשיר" }, { en: "party", he: "מסיבה" }, { en: "thank you", he: "תודה" },
+        { en: "color", he: "צבע" }, { en: "number", he: "מספר" }, { en: "favorite", he: "אהוב" },
+        { en: "Sunday", he: "יום ראשון" }, { en: "Monday", he: "יום שני" }, { en: "Tuesday", he: "יום שלישי" },
+        { en: "Wednesday", he: "יום רביעי" }, { en: "Thursday", he: "יום חמישי" }, { en: "Friday", he: "יום שישי" },
+        { en: "Saturday", he: "יום שבת" }, { en: "what day is today?", he: "איזה יום היום?" },
+        { en: "yesterday", he: "אתמול" }, { en: "today", he: "היום" }, { en: "breakfast", he: "ארוחת בוקר" },
+        { en: "lunch", he: "ארוחת צהריים" }, { en: "dinner", he: "ארוחת ערב" }, { en: "what time is it?", he: "מה השעה?" }
     ];
 
     const allSentences = [
@@ -165,8 +152,7 @@
         { q: "A ____ with cheese.", a: "sandwich" },
         { q: "Go to the ____ for food.", a: "shop" },
         { q: "My ____ is in school.", a: "teacher" },
-        { q: "A ____ of milk.", a: "drink" },
-        { q: "A ____ with balloons.", a: "party" },
+        { q: "A birthday ____ for you.", a: "gift" },
         { q: "The book is ____ the table.", a: "on" },
         { q: "I like to ____ songs.", a: "sing" },
         { q: "Ten plus one is ____.", a: "eleven" },
@@ -174,42 +160,27 @@
         { q: "I eat ____ at night.", a: "dinner" },
         { q: "Sweet ____ is good.", a: "chocolate" },
         { q: "A yellow ____ is sour.", a: "lemon" },
-        { q: "My ____ is my mom's husband.", a: "father" },
         { q: "We are a happy ____.", a: "family" },
         { q: "The ____ is small.", a: "baby" },
-        { q: "I eat ____ and chips.", a: "chicken" },
         { q: "I like to ____ pizza.", a: "eat" },
         { q: "The cat is ____ the chair.", a: "under" },
         { q: "I ____ pizza. It's yummy.", a: "like" },
         { q: "Can you ____ your candy?", a: "share" },
         { q: "I ____ a new pen.", a: "need" },
-        { q: "I ____ a big brother.", a: "have" },
         { q: "____ the apple before you eat.", a: "wash" },
         { q: "Tomato is a red ____.", a: "vegetable" },
         { q: "Apples are my favorite ____.", a: "fruit" },
-        { q: "Put a ____ in the salad.", a: "tomato" },
-        { q: "Mom's mother is my ____.", a: "grandmother" },
-        { q: "Dad's father is my ____.", a: "grandfather" },
         { q: "I want to eat. I am ____.", a: "hungry" },
         { q: "I like ____ on bread.", a: "cheese" },
         { q: "Mom is in the ____.", a: "kitchen" },
-        { q: "A birthday ____ for you.", a: "gift" },
         { q: "____ is before Saturday.", a: "Friday" },
         { q: "Ten plus ten is ____.", a: "twenty" },
         { q: "I like orange ____.", a: "juice" },
         { q: "We eat in a ____.", a: "restaurant" },
         { q: "My ____ is my mom's son.", a: "brother" },
-        { q: "My ____ is my dad's daughter.", a: "sister" },
         { q: "A ____ is a small cake.", a: "cookie" },
-        { q: "I drink hot ____.", a: "coffee" },
-        { q: "Nine plus four is ____.", a: "thirteen" },
-        { q: "Seven plus seven is ____.", a: "fourteen" },
-        { q: "Ten plus five is ____.", a: "fifteen" },
-        { q: "Eight plus eight is ____.", a: "sixteen" },
-        { q: "Ten plus seven is ____.", a: "seventeen" },
         { q: "Today is Tuesday, ____ was Monday.", a: "yesterday" },
         { q: "I am ____. Give me juice.", a: "thirsty" },
-        { q: "The ____ play in the park.", a: "children" },
         { q: "____ the book in the bag.", a: "put" },
         { q: "Blue is a ____.", a: "color" }
     ];
@@ -230,7 +201,9 @@
 
     function init() {
         const selSentences = shuffle([...allSentences]).slice(0, sizeSentences);
+        // סינון למילים עם אימוג'י ברור בלבד לחלק התמונות
         const selEmojis = shuffle(fullList.filter(x => x.emoji)).slice(0, sizeImages);
+        
         const usedInQuiz = new Set([...selSentences.map(s=>s.a), ...selEmojis.map(e=>e.en)]);
         const selMatch = shuffle(fullList.filter(w => !usedInQuiz.has(w.en))).slice(0, sizeMatch);
 
@@ -282,16 +255,14 @@
         shuffle(words).forEach(w => {
             const it = createEl('div', 'drag-item', w, bank);
             it.id = `${prefix}-${w}`;
-            it.draggable = true; // הפעלת גרירה
+            it.draggable = true;
             
-            // אירועי גרירה (מחשב)
             it.ondragstart = (e) => {
                 if(isChecked) return;
                 e.dataTransfer.setData("text", it.id);
                 selectedWord = it;
             };
 
-            // אירועי לחיצה (נייד + גיבוי)
             it.onclick = () => {
                 if(isChecked) return;
                 if(selectedWord) selectedWord.classList.remove('selected-item');
@@ -309,13 +280,12 @@
             } else {
                 d.className = "img-card";
                 d.innerHTML = `<span class="emoji-img">${q.emoji}</span>
-                               <div class="img-drop-zone" data-ans="${q.en}" ondragover="allowDrop(event)" ondragleave="clearDrag(event)" ondrop="handleDrop(event, 'i')" onclick="handleFill(this, 'i')">לחץ למילוי</div>`;
+                               <div class="img-drop-zone" data-ans="${q.en}" ondragover="allowDrop(event)" ondragleave="clearDrag(event)" ondrop="handleDrop(event, 'i')" onclick="handleFill(this, 'i')">לחץ או גרור</div>`;
             }
             cont.appendChild(d);
         });
     }
 
-    // פונקציות Drag & Drop
     function allowDrop(e) {
         e.preventDefault();
         if(!isChecked) e.target.classList.add('drag-over');
@@ -341,7 +311,7 @@
         if(isChecked || !selectedWord) return;
         if(selectedWord.id.split('-')[0] !== prefix) return;
         
-        if(zone.innerText && zone.innerText !== "לחץ למילוי") {
+        if(zone.innerText && zone.innerText !== "לחץ או גרור") {
             const oldWord = document.getElementById(`${prefix}-${zone.innerText}`);
             if(oldWord) oldWord.classList.remove('used');
         }
