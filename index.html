@@ -26,8 +26,10 @@
         .word-bank { background: #fff9c4; padding: 15px; border-radius: 15px; margin: 15px 0; text-align: center; border: 2px dashed #fbc02d; }
         .drag-item { 
             display: inline-block; padding: 8px 12px; background: white; border: 2px solid var(--primary);
-            border-radius: 12px; cursor: pointer; margin: 4px; font-weight: bold; color: var(--primary); font-size: 0.9rem;
+            border-radius: 12px; cursor: grab; margin: 4px; font-weight: bold; color: var(--primary); font-size: 0.9rem;
+            user-select: none;
         }
+        .drag-item:active { cursor: grabbing; }
         .drag-item.selected-item { background: var(--primary); color: white; }
         .drag-item.used { opacity: 0.2; text-decoration: line-through; pointer-events: none; filter: grayscale(1); }
 
@@ -35,6 +37,7 @@
             display: inline-block; min-width: 80px; padding: 5px; border-bottom: 3px solid var(--primary); 
             background: #f7fafc; vertical-align: middle; text-align: center; border-radius: 5px 5px 0 0; min-height: 30px; cursor: pointer;
         }
+        .drop-zone.drag-over, .img-drop-zone.drag-over { background: #e2e8f0; border-color: #2d3748; }
         .img-drop-zone { width: 90%; margin: 8px auto; border: 2px dashed var(--primary); color: #a0aec0; }
         
         .ltr-text { direction: ltr; text-align: left; }
@@ -151,7 +154,6 @@
         { en: "dinner", he: "ארוחת ערב", emoji: "🥗" }, { en: "what time is it?", he: "מה השעה?", emoji: "⌚" }
     ];
 
-    // משפטים מופשטים יותר לכיתה ד'
     const allSentences = [
         { q: "I eat ____ in the morning.", a: "breakfast" },
         { q: "My ____ is my dad's wife.", a: "mother" },
@@ -280,6 +282,16 @@
         shuffle(words).forEach(w => {
             const it = createEl('div', 'drag-item', w, bank);
             it.id = `${prefix}-${w}`;
+            it.draggable = true; // הפעלת גרירה
+            
+            // אירועי גרירה (מחשב)
+            it.ondragstart = (e) => {
+                if(isChecked) return;
+                e.dataTransfer.setData("text", it.id);
+                selectedWord = it;
+            };
+
+            // אירועי לחיצה (נייד + גיבוי)
             it.onclick = () => {
                 if(isChecked) return;
                 if(selectedWord) selectedWord.classList.remove('selected-item');
@@ -293,19 +305,42 @@
             if(prefix === 's') {
                 d.className = "sentence-row";
                 d.innerHTML = `<button class="speak-btn" onclick="speak('${q.q}')">🔊</button> 
-                               <span>${q.q.replace('____', `<div class="drop-zone" data-ans="${q.a}" onclick="handleFill(this, 's')"></div>`)}</span>`;
+                               <span>${q.q.replace('____', `<div class="drop-zone" data-ans="${q.a}" ondragover="allowDrop(event)" ondragleave="clearDrag(event)" ondrop="handleDrop(event, 's')" onclick="handleFill(this, 's')"></div>`)}</span>`;
             } else {
                 d.className = "img-card";
                 d.innerHTML = `<span class="emoji-img">${q.emoji}</span>
-                               <div class="img-drop-zone" data-ans="${q.en}" onclick="handleFill(this, 'i')">לחץ למילוי</div>`;
+                               <div class="img-drop-zone" data-ans="${q.en}" ondragover="allowDrop(event)" ondragleave="clearDrag(event)" ondrop="handleDrop(event, 'i')" onclick="handleFill(this, 'i')">לחץ למילוי</div>`;
             }
             cont.appendChild(d);
         });
     }
 
+    // פונקציות Drag & Drop
+    function allowDrop(e) {
+        e.preventDefault();
+        if(!isChecked) e.target.classList.add('drag-over');
+    }
+
+    function clearDrag(e) {
+        e.target.classList.remove('drag-over');
+    }
+
+    function handleDrop(e, prefix) {
+        e.preventDefault();
+        e.target.classList.remove('drag-over');
+        if(isChecked) return;
+        const id = e.dataTransfer.getData("text");
+        const draggedEl = document.getElementById(id);
+        if(draggedEl && id.startsWith(prefix)) {
+            selectedWord = draggedEl;
+            handleFill(e.target, prefix);
+        }
+    }
+
     function handleFill(zone, prefix) {
         if(isChecked || !selectedWord) return;
         if(selectedWord.id.split('-')[0] !== prefix) return;
+        
         if(zone.innerText && zone.innerText !== "לחץ למילוי") {
             const oldWord = document.getElementById(`${prefix}-${zone.innerText}`);
             if(oldWord) oldWord.classList.remove('used');
